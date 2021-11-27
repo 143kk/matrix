@@ -1,5 +1,6 @@
 #include <arm_neon.h>
 #include "omp.h"
+#include "matrix.hpp"
 
 
 // float
