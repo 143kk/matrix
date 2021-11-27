@@ -26,7 +26,7 @@ inline void mat_load_mat1_s32(int32x4_t &mat1_vec, int * mat1Ptr) {
 	mat1_vec = vdupq_n_s32(*mat1Ptr);
 }
 
-inline void mat_mm256_comb_s32(int * resPtr, int32x4_t &mat1_vec, int * mat2Ptr) {
+inline void mat_comb_s32(int * resPtr, int32x4_t &mat1_vec, int * mat2Ptr) {
 		vst1q_s32(resPtr, vmlaq_s32(vld1q_s32(resPtr), mat1_vec, vld1q_s32(mat2Ptr)));
 }
 

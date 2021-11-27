@@ -56,9 +56,9 @@ const Mat<float> Mat<float>::operator*(const Mat<float> &m) const {
 	OP_ASSERT(_cols != m._rows || _channels != m._channels, "Matrix sizes not matched.") 
 	Mat<float> res(_rows, m._cols, _channels);	
 	if(m.aligned) {
-		matmul_simd<__m256>(*this, m, res, mat_mm256_load_mat1_ps, mat_mm256_comb_ps, 32/sizeof(float));
+		matmul_simd<__m256>(*this, m, res, mat_mm256_load_mat1_ps, mat_mm256_comb_ps, 8);
 	}else{
-		matmul_simd<__m256>(*this, m, res, mat_mm256_load_mat1_ps, mat_mm256_combu_ps, 32/sizeof(float));
+		matmul_simd<__m256>(*this, m, res, mat_mm256_load_mat1_ps, mat_mm256_combu_ps, 8);
 	}
 	return res;
 }
@@ -68,9 +68,9 @@ const Mat<double> Mat<double>::operator*(const Mat<double> &m) const {
 	OP_ASSERT(_cols != m._rows || _channels != m._channels, "Matrix sizes not matched.") 
 	Mat<double> res(_rows, m._cols, _channels);	
 	if(m.aligned) {
-		matmul_simd<__m256d>(*this, m, res, mat_mm256_load_mat1_pd, mat_mm256_comb_pd, 32/sizeof(double));
+		matmul_simd<__m256d>(*this, m, res, mat_mm256_load_mat1_pd, mat_mm256_comb_pd, 4);
 	}else{
-		matmul_simd<__m256d>(*this, m, res, mat_mm256_load_mat1_pd, mat_mm256_combu_pd, 32/sizeof(double));
+		matmul_simd<__m256d>(*this, m, res, mat_mm256_load_mat1_pd, mat_mm256_combu_pd, 4);
 	}
 	return res;
 }
@@ -80,9 +80,9 @@ const Mat<int> Mat<int>::operator*(const Mat<int> &m) const {
 	OP_ASSERT(_cols != m._rows || _channels != m._channels, "Matrix sizes not matched.") 
 	Mat<int> res(_rows, m._cols, _channels);	
 	if(m.aligned) {
-		matmul_simd<__m256i>(*this, m, res, mat_mm256_load_mat1_epi32, mat_mm256_comb_epi32, 32/sizeof(int));
+		matmul_simd<__m256i>(*this, m, res, mat_mm256_load_mat1_epi32, mat_mm256_comb_epi32, 8);
 	}else{
-		matmul_simd<__m256i>(*this, m, res, mat_mm256_load_mat1_epi32, mat_mm256_combu_epi32, 32/sizeof(int));
+		matmul_simd<__m256i>(*this, m, res, mat_mm256_load_mat1_epi32, mat_mm256_combu_epi32, 8);
 	}
 	return res;
 }

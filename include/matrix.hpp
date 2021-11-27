@@ -20,6 +20,7 @@ struct MatData {
 
 	MatData(size_t size, size_t width): refcount(1), width(width), _size(size){
 		data = aligned_alloc(MAT_ALIGN_BYTES, size);
+		memset(data, 0, size);
 	}
 
 	~MatData(){
@@ -135,7 +136,7 @@ class Mat {
 				for(size_t i = 1; i <= _rows; ++i) {
 					for(size_t k = 1; k <= _cols; ++k) {
 						for(size_t j = 1; j <= m._cols; ++j) {
-							*(ret.getAddr(i, j, c)) += *getAddr(i, k, c) * *(m.getAddr(k, j, c));
+							*(ret.getAddr(i, j, c)) += *(getAddr(i, k, c)) * *(m.getAddr(k, j, c));
 						}
 					}
 				}
