@@ -13,7 +13,7 @@ inline void mat_comb_f32(float * resPtr, float32x4_t &mat1_vec, float * mat2Ptr)
 
 // double
 inline void mat_load_mat1_f64(float64x2_t &mat1_vec, double * mat1Ptr) {
-	mat1_vec = vdupq_n_f64(mat1Ptr);
+	mat1_vec = vdupq_n_f64(*mat1Ptr);
 }
 
 inline void mat_comb_f64(double * resPtr, float64x2_t &mat1_vec, double * mat2Ptr) {
@@ -22,7 +22,7 @@ inline void mat_comb_f64(double * resPtr, float64x2_t &mat1_vec, double * mat2Pt
 
 //int
 inline void mat_load_mat1_s32(int32x4_t &mat1_vec, int * mat1Ptr) {
-	mat1_vec = _mm256_set1_epi32(*mat1Ptr);
+	mat1_vec = vdupq_n_s32(*mat1Ptr);
 }
 
 inline void mat_mm256_comb_s32(int * resPtr, int32x4_t &mat1_vec, int * mat2Ptr) {
