@@ -48,7 +48,6 @@ struct MatData {
 template <typename T>
 class Mat {
 	size_t _cols, _rows, _channels;
-	//T * data;
 	T ** data;
 	MatData * md;
 	bool aligned;
@@ -85,9 +84,14 @@ class Mat {
 			_cols = m._cols;
 			_channels = m._channels;
 			md = m.md;
-			data = m.data;
 			aligned = m.aligned;
 			md->addRef();
+
+			delete [] data;
+			data = new T*[_channels];
+			for(size_t c = 0; c < _channels; ++c) {
+				data[c] = m.data[c];
+			}
 			return *this;
 		}
 
@@ -111,19 +115,15 @@ class Mat {
 			OP_ASSERT(!SAME_TYPE, "Matrix types not matched")
 
 			Mat ret(_rows, _cols, _channels);
-			for(size_t i = 1; i <= m._rows; ++i) {
-				for(size_t j = 1; j <= m._cols; ++j) {
-					for(size_t k = 0; k < m._channels; ++k) {
+			for(size_t i = 1; i <= _rows; ++i) {
+				for(size_t j = 1; j <= _cols; ++j) {
+					for(size_t k = 0; k < _channels; ++k) {
 						*(ret.getAddr(i, j, k)) = *getAddr(i, j, k) - *(m.getAddr(i, j, k));
 					}
 				}
 			}
 			
 			return ret;
-		}
-
-		void printRef() {
-			cout << md->refcount << endl;
 		}
 
 		const Mat operator*(const Mat &m) const;
@@ -149,7 +149,7 @@ class Mat {
 			for(size_t i = 1; i <= _rows; ++i) {
 				for(size_t j = 1; j <= _cols; ++j) {
 					for(size_t k = 0; k < _channels; ++k) 
-						*(ret.getAddr(i, j, k)) = -(*getAddr(i, j, k));
+						*(ret.getAddr(i, j, k)) = -(*(getAddr(i, j, k)));
 				}
 			}
 
@@ -164,8 +164,8 @@ class Mat {
 			}else{
 				for(size_t i = 1; i <= _rows; ++i) {
 					for(size_t j = 1; j <= _cols; ++j) {
-						for(size_t k = 0; j < _channels; ++k) {
-								*getAddr(i, j, k) += *m.getAddr(i, j, k);
+						for(size_t k = 0; k < _channels; ++k) {
+							*getAddr(i, j, k) += *(m.getAddr(i, j, k));
 						}
 					}
 				}
@@ -181,17 +181,20 @@ class Mat {
 			}else{
 				for(size_t i = 1; i <= _rows; ++i) {
 					for(size_t j = 1; j <= _cols; ++j) {
-						for(size_t k = 0; j < _channels; ++k)
-							*getAddr(i, j, k) -= *m.getAddr(i, j, k);
+						for(size_t k = 0; k < _channels; ++k)
+							*getAddr(i, j, k) -= *(m.getAddr(i, j, k));
 					}
 				}
 			}
 			return *this;
 		}
 
-		// Mat& operator*= (const Mat &m);
+		Mat& operator*= (const Mat &m) {
+			*this = *this * m;
+			return *this;
+		}
 
-		Mat operator*(T x) const {
+		const Mat operator*(T x) const {
 			Mat ret(_rows, _cols, _channels);
 			for(size_t i = 1; i <= _rows; ++i) {
 				for(size_t j = 1; j <= _cols; ++j) {
@@ -380,7 +383,6 @@ Mat<T> Mat<T>::select(size_t rbegin, size_t rend, size_t cstart, size_t cend) co
 template <typename T>
 Mat<T> Mat<T>::random(size_t rows, size_t cols, size_t channels) {
 	Mat<T> ret(rows, cols, channels);
-	srand((unsigned int)time(NULL));
 	for(int i = 0; i < channels; ++i) {
 		for(int j = 1; j <= rows; ++j) {
 			for(int k = 1; k <= cols; ++k) {
@@ -394,7 +396,6 @@ Mat<T> Mat<T>::random(size_t rows, size_t cols, size_t channels) {
 template <typename T>
 Mat<T> Mat<T>::ones(size_t size) {
 	Mat<T> ret(size, size);
-	size_t total = ret.total();
 	for(size_t i = 1; i <= size; ++i)
 		for(size_t j = 1; j <= size; ++j)
 			*(ret.getAddr(i, j)) = 1;
